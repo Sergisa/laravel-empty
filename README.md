@@ -7,3 +7,5 @@
 ## Learning Laravel
 
 No starterKit laravel-project
+
+### Создание компонента Card из простого примера
