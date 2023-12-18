@@ -41,8 +41,8 @@ npm run build
 Теперь в папке /public/build/assets появилось два файла `app-*.css` `app-*.js` это файлы, который сформировались из
 файлов:
 
-- /resources/css/app.css ➜ /public/build/assets/`app-8459003.css`
-- /resources/js/app.js ➜ /public/build/assets/`app-ddee773b.js`
+- /resources/css/app.css ⟹ /public/build/assets/`app-8459003.css`
+- /resources/js/app.js ⟹ /public/build/assets/`app-ddee773b.js`
 
 В файле **app.css** были прочитаны строки
 
