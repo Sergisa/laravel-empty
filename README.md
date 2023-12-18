@@ -1,5 +1,5 @@
 <p align="center">
-    <img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400">
+    <img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="">
 </p>
 <p align="center">
     <img src="https://img.shields.io/badge/Jetstream-NO-red" alt="Build Status">
@@ -8,59 +8,92 @@
 <p align="center">
     <img src="https://img.shields.io/badge/Testing-PHPUnit-indigo?style=for-the-badge" alt="Build Status">
     <img src="https://img.shields.io/badge/Database-SQLtie-ffff00?style=for-the-badge" alt="Build Status">
+    <img src="https://img.shields.io/badge/WebSocket-Vite-ffff00?style=for-the-badge" alt="Build Status">
 </p>
 
 # Изучаем Laravel
 
-В данной ветке показан пример развёртывания и разработки проекта с использованием фреймворка Laravel
+В данной ветке показан пример использования сборки css.  
+Создадим новые файлы:
 
-## Развёртка проекта
+- tailwind.config.js
+- postcss.config.js
 
-Начнём разворачивать проект с названием `laravel-empty`. Откроем командную строку и перейдём в ту папку, в которой мы
-хотим создать папку с будущим проектом.
-При установке рет будет идти о двух PHP библиотеках:
+Установим новые библиотеки
 
-- `laravel/installer`
-  Эта библиотека представляет собой установщик и настройщик первичного скелета вашего приложения. Он просто создаст вам
-  минимально необходимый набор файлов и папок в рамках которых будет работать ваш сайт. Важно понимать что это PHP
-  скрипты, которые будут запускать не в виде сайта из браузера, а в командной строке для исполнения в операционной
-  системе.
-- `laravel/framework`
-  Эта библиотека представляет собой сам фреймворк (набор готовых функций и механизмов) благодаря которому будет работать
-  ваш сайт. Этот набор PHP скриптов будет запускать, как раз, при запросе страниц вашего сайта в браузере.
+- tailwindcss
+- postcss
+- autoprefixer
 
-### Глобальный пакет
+``npm install -D tailwindcss postcss autoprefixer``
 
-Для того чтобы развернуть проект, необходимо скачать пакет laravel/installer. Этот пакет устанавливается глобально. Так
-как пакет устанавливается глобально, то выполнять его можно в любой папке операционной системы в командной строке.
+## Использование модуля Vite
 
-```bash
-  composer global require laravel/installer
+### Преобразование CSS и JS
+
+Данный модуль позволит нам собирать css и js файлы нашего проекта.
+Наберём в командной строке:
+
+```shell
+npm run build
 ```
 
-Глобальный пакет появится в компьютере в папке `C:\Users\{%USERNAME%}\AppData\Roaming\Composer\vendor\laravel\installer`
-В папке `C:\Users\Sergisa\AppData\Roaming\Composer\vendor\bin` появится файл **laravel.bat** а сама папка должна быть
-прописана в переменной PATH в настройках. Теперь в командной строке появляется возможность использовать
-команду `laravel`
+Теперь в папке /public/build/assets появилось два файла `app-*.css` `app-*.js` это файлы, который сформировались из
+файлов:
 
-### Создание папки с проектом
+- /resources/css/app.css ➜ /public/build/assets/`app-8459003.css`
+- /resources/js/app.js ➜ /public/build/assets/`app-ddee773b.js`
 
-Что бы развернуть проект нужно в командной строке выполнить команду:
+В файле **app.css** были прочитаны строки
 
-```bash
-    laravel new laravel-empty --force
+```css
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
 ```
 
-Флаг `--force` указывает на то, что папку с проектом необходимо создать даже если
-такая уже есть. При выполнении такой команды установщик будет задавать вопросы о том, с какими параметрами необходимо
-развернуть проект. А именно:
-какой набор плагинов использовать
+Эти строки скомпилировались в css при выполнении команды ``npm run build``.
 
-Так же развернуть установку можно командой:
+### Использование CSS в HTML коде страницы
 
-```bash
-    composer create-project laravel/laravel laravel-empty
+Теперь в файле **layout.blade.php** заменим тэг **Style**
+
+```html
+
+<style>
+    /* ! tailwindcss v3.2.4 ... */
+    ...CSS...
+</style>
 ```
 
-Для того что бы команда сработала необходимо чтобы папки **laravel-empty** не было в папке, в которой исполняется
-команда.
+на
+
+```php
+@vite('resources/css/app.css')
+```
+
+При обновлении страницы мы увидим что такая директива развернулась в путь в виде:
+
+```html
+
+<link rel="stylesheet" href="http://127.0.0.1:8000/build/assets/app-8459003d.css">
+```
+
+А это и есть ссылка на собранный файл
+
+### Преобразование на ходу
+
+Так же если в командной строке ввести команду `npm run dev` то запустится сервер по адресу `http://localhost:5173/`.
+А директива `@vite ('resources/css/app.css')` превратится на стороне браузера в:
+
+```html
+<script type="module" src="http://[::1]:5173/@vite/client"></script>
+<link rel="stylesheet" href="http://[::1]:5173/resources/css/app.css">
+```
+
+Получается что на _5173_ порту браузера открывается сервер с протоколом WebSocket который будет отдавать
+скомпилированный CSS по запросу страницы, собирая его именно в момент запроса, а так же будет сам инициировать
+перезагрузку страницы, если на стороне сервера произойдут изменения в файлах стилей. Перезагрузку страницы обеспечивает
+скрипт по адресу `http://[::1]:5173/@vite/client`. Этот скрипт подключается к порту _5173_ локального сервера и при
+инициации перезагрузки сообщением от сервера запускает перезапуск самой страницы командой `location.reload()`, которую
+можно найти в этом скрипте. Попросту говоря этот скрипт это приёмник сообщений от сервера.
