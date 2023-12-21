@@ -78,7 +78,6 @@ npm run build
 При обновлении страницы мы увидим что такая директива развернулась в путь в виде:
 
 ```html
-
 <link rel="stylesheet" href="http://127.0.0.1:8000/build/assets/app-8459003d.css">
 ```
 
@@ -90,7 +89,6 @@ npm run build
 А директива `@vite ('resources/css/app.css')` превратится на стороне браузера в:
 
 ```html
-
 <script type="module" src="http://[::1]:5173/@vite/client"></script>
 <link rel="stylesheet" href="http://[::1]:5173/resources/css/app.css">
 ```
@@ -103,7 +101,33 @@ npm run build
 можно найти в этом скрипте. Попросту говоря этот скрипт это приёмник сообщений от сервера.
 
 ### Создание описания CSS классов
+Для начала нам необходимо установить сам пакет tailwind:
 
-У фреймворка tailwind есть множество описанных классов, добавляя которых к тегам можно управлять их отображением и
-графическим поведением. Например, тегу можно присвоить следующий набор классов:
+```
+    npm install tailwindcss -D
+```
 
+У фреймворка tailwind есть множество описанных классов, которые можно присваивать тегам и тем самым управлять их
+отображением и графическим поведением. Например, тегу можно присвоить следующий набор классов:
+
+```html
+<a class="justify-between scale-100 p-6 bg-white dark:bg-gray-800/50 dark:bg-gradient-to-bl from-gray-700/50 via-transparent dark:ring-1 dark:ring-inset dark:ring-white/5 rounded-lg shadow-2xl shadow-gray-500/20 dark:shadow-none flex motion-safe:hover:scale-[1.01] transition-all duration-250 focus:outline focus:outline-2 focus:outline-red-500"></a>
+```
+
+Так же можно создать и своё определение класса в css файле и использовать его в HTML:
+
+```css
+.card {
+    @apply justify-between scale-100 p-6 bg-white dark:bg-gray-800/50 dark:bg-gradient-to-bl from-gray-700/50 via-transparent dark:ring-1 dark:ring-inset dark:ring-white/5 rounded-lg shadow-2xl shadow-gray-500/20 dark:shadow-none flex motion-safe:hover:scale-[1.01] transition-all focus:outline focus:outline-2 focus:outline-red-500
+}
+```
+
+Для класса `.card` мы назначили перечень классов, описанных в библиотеке tailwind. То есть нашему классу будет присвоены
+все свойства которыми обладают перечисленные внутри классы после директивы `@apply`. Такую надпись не сможет распознать
+браузер, а tailwind плагин сможет
+
+```html
+<a class="card"></a>
+```
+
+При сборке css файла все классы в строке после слова @apply развернутся в виде CSS свойств. 
